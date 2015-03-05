@@ -1,3 +1,5 @@
+<?php 
+
 /**
  * Plugin Name: Ajax Test
  * Plugin URI: http://danielpataki.com

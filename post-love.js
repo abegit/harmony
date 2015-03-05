@@ -8,7 +8,7 @@ jQuery( document ).on( 'click', '.love-button', function() {
 			post_id : post_id
 		},
 		success : function( response ) {
-			alert(response)
+			jQuery('#love-count').html( response );
 		}
 	});
 })

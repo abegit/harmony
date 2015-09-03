@@ -12,14 +12,14 @@
 
 add_action( 'wp_enqueue_scripts', 'post_love_assets' );
 function post_love_assets() {
-	if( is_single() ) {
+	if( bp_is_members_directory() ) {
 		wp_enqueue_style( 'love', plugins_url( '/love.css', __FILE__ ) );
 	}
 }
 
 add_action( 'wp_enqueue_scripts', 'ajax_test_enqueue_scripts' );
 function ajax_test_enqueue_scripts() {
-	if( is_single() ) {
+	if( bp_is_members_directory() ) {
 		wp_enqueue_style( 'love', plugins_url( '/style.css', __FILE__ ) );
 	}
 	wp_enqueue_script( 'love', plugins_url( '/love-basic-ajax.js', __FILE__ ), '1.0', true );
@@ -45,11 +45,11 @@ function post_love_add_love() {
 		exit();
 	}
 }
-add_filter( 'the_content', 'post_love_display', 99 );
+add_filter( 'bp_directory_members_actions', 'post_love_display', 99 );
 function post_love_display( $content ) {
 	$love_text = '';
 
-	if ( is_single() ) {
+	if ( bp_is_members_directory() ) {
 		
 		$love = bp_get_profile_field_data( 'field=Name&user_id='.bp_loggedin_user_id() );
 		$love = ( empty( $love ) ) ? 0 : $love;

@@ -22,7 +22,7 @@ function ajax_test_enqueue_scripts() {
 	if( is_single() ) {
 		wp_enqueue_style( 'love', plugins_url( '/style.css', __FILE__ ) );
 	}
-	wp_enqueue_script( 'love', plugins_url( '/love-basic-ajax.js', __FILE__ ), array('jquery'), '1.0', true );
+	wp_enqueue_script( 'love', plugins_url( '/love-basic-ajax.js', __FILE__ ), '1.0', true );
 	wp_localize_script( 'love', 'postlove', array(
 		'ajax_url' => admin_url( 'admin-ajax.php' )
 	));
@@ -33,15 +33,15 @@ add_action( 'wp_ajax_nopriv_post_love_add_love', 'post_love_add_love' );
 add_action( 'wp_ajax_post_love_add_love', 'post_love_add_love' );
 
 function post_love_add_love() {
-	$love = get_post_meta( $_REQUEST['post_id'], 'post_love', true );
-	$love++;
-	update_post_meta( $_REQUEST['post_id'], 'post_love', $love );
+	$love = bp_get_profile_field_data( 'field=Name&user_id='.$_REQUEST['user_id'] );
+	$love .= ' '. $_REQUEST['matchid'];
+	
 	if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) { 
 		echo $love;
 		die();
 	}
 	else {
-		wp_redirect( get_permalink( $_REQUEST['post_id'] ) );
+		wp_redirect( get_permalink( $_REQUEST['user_id'] ) );
 		exit();
 	}
 }
@@ -51,10 +51,10 @@ function post_love_display( $content ) {
 
 	if ( is_single() ) {
 		
-		$love = get_post_meta( get_the_ID(), 'post_love', true );
+		$love = bp_get_profile_field_data( 'field=Name&user_id='.bp_loggedin_user_id() );
 		$love = ( empty( $love ) ) ? 0 : $love;
 
-		$love_text = '<p class="love-received"><a class="love-button" href="' . admin_url( 'admin-ajax.php?action=post_love_add_love&post_id=' . get_the_ID() ) . '" data-id="' . get_the_ID() . '">give love</a><span id="love-count">' . $love . '</span></p>'; 
+		$love_text = '<p class="love-received"><a class="love-button" href="' . admin_url( 'admin-ajax.php?action=post_love_add_love&user_id=' . bp_loggedin_user_id(). '&matchid=' . bp_loggedin_user_id() ) . '" data-id="' . bp_loggedin_user_id() . '" data-matchid="' . bp_loggedin_user_id() . '">give love</a><span id="love-count">' . $love . '</span></p>'; 
 	
 	}
 

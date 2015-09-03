@@ -45,7 +45,6 @@ function post_love_add_love() {
 		exit();
 	}
 }
-add_filter( 'bp_directory_members_actions', 'post_love_display', 99 );
 function post_love_display( $content ) {
 	$love_text = '';
 
@@ -61,4 +60,5 @@ function post_love_display( $content ) {
 	return $content . $love_text;
 
 }
+add_action('bp_directory_members_item',  'post_love_display');
 ?>

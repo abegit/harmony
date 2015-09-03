@@ -48,16 +48,13 @@ function post_love_add_love() {
 function post_love_display( $content ) {
 	$love_text = '';
 
-	if ( bp_is_members_directory() ) {
 		
 		$love = bp_get_profile_field_data( 'field=Name&user_id='.bp_loggedin_user_id() );
 		$love = ( empty( $love ) ) ? 0 : $love;
 
 		$love_text = '<p class="love-received"><a class="love-button" href="' . admin_url( 'admin-ajax.php?action=post_love_add_love&user_id=' . bp_loggedin_user_id(). '&matchid=' . bp_loggedin_user_id() ) . '" data-id="' . bp_loggedin_user_id() . '" data-matchid="' . bp_loggedin_user_id() . '">give love</a><span id="love-count">' . $love . '</span></p>'; 
-	
-	}
 
-	return $content . $love_text;
+	echo $love_text;
 
 }
 add_action('bp_directory_members_item',  'post_love_display');

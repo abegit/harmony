@@ -29,13 +29,27 @@ function ajax_test_enqueue_scripts() {
 }
 
 
+function bp_send_image_denied_message($user1, $user2) {
+global $bp;
+//check_admin_referer(message_check”); // adjust if needed
+$sender_id = $user1; // moderator id ?
+$recip_id = $user2; // denied image user id ?
+	if ( $thread_id = messages_new_message( array('sender_id' => $sender_id, 'subject' =>'Hello Partner', 'content' => 'How do you do', 'recipients' => $recip_id ) ) ) {
+		bp_core_add_message( __( 'Image Denied Message was sent.', 'buddypress' ) );
+	} else {
+		bp_core_add_message( __( 'There was an error sending that Private Message.', 'buddypress' ), 'error' );
+	}
+
+}
+
 add_action( 'wp_ajax_nopriv_post_love_add_love', 'post_love_add_love' );
 add_action( 'wp_ajax_post_love_add_love', 'post_love_add_love' );
 
 function post_love_add_love() {
-	$love = bp_get_profile_field_data( 'field=Name&user_id='.$_REQUEST['user_id'] );
-	$love .= ' '. $_REQUEST['matchid'];
-	
+	$love = bp_get_profile_field_data( 'field=handshake&user_id='.$_REQUEST['user_id'] );
+	$love .= ','. $_REQUEST['matchid'];
+	xprofile_set_field_data( 'handshake', $_REQUEST['user_id'], $love );
+	bp_send_image_denied_message($_REQUEST['user_id'], $_REQUEST['matchid']);
 	if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) { 
 		echo $love;
 		die();
@@ -48,13 +62,14 @@ function post_love_add_love() {
 function post_love_display( $content ) {
 	$love_text = '';
 
-		
-		$love = bp_get_profile_field_data( 'field=Name&user_id='.bp_loggedin_user_id() );
-		$love = ( empty( $love ) ) ? 0 : $love;
-
-		$love_text = '<p class="love-received"><a class="love-button" href="' . admin_url( 'admin-ajax.php?action=post_love_add_love&user_id=' . bp_loggedin_user_id(). '&matchid=' . bp_loggedin_user_id() ) . '" data-id="' . bp_loggedin_user_id() . '" data-matchid="' . bp_loggedin_user_id() . '">give love</a><span id="love-count">' . $love . '</span></p>'; 
-
-	echo $love_text;
+		if (bp_loggedin_user_id()) {
+			$love = bp_get_profile_field_data( 'field=handshake&user_id='.bp_loggedin_user_id() );
+			$love = ( empty( $love ) ) ? 0 : $love;
+			echo '<p class="love-received">';
+			echo '<a class="love-button" href="' . admin_url( 'admin-ajax.php?action=post_love_add_love&user_id=' . bp_loggedin_user_id(). '&matchid=' . bp_get_member_user_id() ) . '" data-id="' . bp_loggedin_user_id() . '" data-matchid="' . bp_get_member_user_id() . '">'.bp_get_member_user_id().'</a>';
+			echo '<span id="love-count">' . $love . '</span>';
+			echo '</p>'; 
+		}
 
 }
 add_action('bp_directory_members_item',  'post_love_display');

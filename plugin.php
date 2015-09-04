@@ -29,7 +29,7 @@ function ajax_test_enqueue_scripts() {
 }
 
 
-function bp_send_image_denied_message($user1, $user2) {
+function bp_send_harmony_message($user1, $user2) {
 global $bp;
 //check_admin_referer(message_check”); // adjust if needed
 $sender_id = $user1; // moderator id ?
@@ -47,9 +47,17 @@ add_action( 'wp_ajax_post_love_add_love', 'post_love_add_love' );
 
 function post_love_add_love() {
 	$love = bp_get_profile_field_data( 'field=handshake&user_id='.$_REQUEST['user_id'] );
+	$otherlove = bp_get_profile_field_data( 'field=handshake&user_id='.$_REQUEST['matchid'] );
+
+	$lovemaking = explode(',', $otherlove);
+
 	$love .= ','. $_REQUEST['matchid'];
 	xprofile_set_field_data( 'handshake', $_REQUEST['user_id'], $love );
-	bp_send_image_denied_message($_REQUEST['user_id'], $_REQUEST['matchid']);
+	
+	if ( in_array($_REQUEST['user_id'], $lovemaking) ) {
+		bp_send_harmony_message($_REQUEST['user_id'], $_REQUEST['matchid']);
+	}
+
 	if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) { 
 		echo $love;
 		die();

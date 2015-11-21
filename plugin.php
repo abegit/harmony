@@ -1,12 +1,12 @@
 <?php 
 
 /**
- * Plugin Name: Ajax Test
- * Plugin URI: http://danielpataki.com
- * Description: This is a plugin that allows us to test Ajax functionality in WordPress
+ * Plugin Name: Harmony
+ * Plugin URI: http://unscene.us/contact
+ * Description: This is a plugin that allows anyone to kiss other Wordpress Users across the network and save preferences for each like.
  * Version: 1.0.0
- * Author: Daniel Pataki
- * Author URI: http://danielpataki.com
+ * Author: Unscene Abe
+ * Author URI: http://bonoboville.com/abenriquez
  * License: GPL2
  */
 

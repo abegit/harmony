@@ -50,16 +50,21 @@ add_action( 'wp_ajax_nopriv_post_love_add_love', 'post_love_add_love' );
 add_action( 'wp_ajax_post_love_add_love', 'post_love_add_love' );
 
 function post_love_add_love() {
-	$love = bp_get_profile_field_data( 'field=handshake&user_id='.$_REQUEST['user_id'] );
+	$lovr = bp_loggedin_user_id();
+	$love = bp_get_profile_field_data( 'field=handshake&user_id='.$lovr );
 	$otherlove = bp_get_profile_field_data( 'field=handshake&user_id='.$_REQUEST['matchid'] );
 
 	$lovemaking = explode(',', $otherlove);
 
-	$love .= ','. $_REQUEST['matchid'];
-	xprofile_set_field_data( 'handshake', $_REQUEST['user_id'], $love );
+	$lovemaking2 = explode(',', $love);
+	$lovemaking2[] = $_REQUEST['matchid'];
+	$love = array_unique($lovemaking2);
+	$lovemaking3 = implode(',', $love);
+
+	xprofile_set_field_data( 'handshake', $lovr, $lovemaking3 );
 	
-	if ( in_array($_REQUEST['user_id'], $lovemaking) ) {
-		bp_send_harmony_message($_REQUEST['user_id'], $_REQUEST['matchid']);
+	if ( in_array($lovr, $lovemaking) ) {
+		bp_send_harmony_message($lovr, $_REQUEST['matchid']);
 	}
 	
 	if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) { 
@@ -67,7 +72,7 @@ function post_love_add_love() {
 		die();
 	}
 	else {
-		wp_redirect( get_permalink( $_REQUEST['user_id'] ) );
+		wp_redirect( get_permalink( $lovr ) );
 		exit();
 	}
 }
